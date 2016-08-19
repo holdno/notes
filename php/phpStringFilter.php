@@ -1,4 +1,5 @@
 <?php
+//第xx届 xx日 等规则的字符串截取方法
 function removeWords($q, $s, $e) {
     $q = "XX" . $q;
     $startDel = strpos($q, $s);
