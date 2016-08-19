@@ -1,0 +1,44 @@
+#nginx 配置文件 让nginx支持pathinfo 进而支持 thinkphp
+#测试的thinkphp版本为3.2.3
+
+server {
+listen       80;
+#网站域名
+server_name  xxx.xxxxx.xxx;
+#网站根目录(服务器绝对路径)
+root   "/xxx/xxx/xxx/xxx";
+
+#这里是thinkphp在网站根目录的情况下
+location / {
+    #这里的if是判断当前访问路径是否有同名文件，没有的话才执行rewrite
+    if (!-e $request_filename) {
+        rewrite ^/(.*)$ /index.php?s=$1 last;
+        break;
+    }
+}
+#如果thinkphp是放在根目录的一个文件夹下，假设在api文件夹内
+#多级目录只需将/api/替换为多级即可，例如/api/thinkphp/
+location /api/ {
+    if (!-e $request_filename) {
+        rewrite ^/api/(.*)$ /api/index.php?s=$1 last;
+        break;
+    }
+}
+#nginx开启pathinfo的相关配置
+location ~ \.php {
+    #下面两项根据自身服务器PHP访问方式进行开启
+    fastcgi_pass localhost:9000;
+    #fastcgi_pass unix:/dev/shm/php-cgi.sock;
+    fastcgi_index index.php;
+    include fastcgi_params;
+    set $real_script_name $fastcgi_script_name;
+        if ($fastcgi_script_name ~ "^(.+?\.php)(/.+)$") {
+            set $real_script_name $1;
+            #set $path_info $2;
+        }
+    fastcgi_param SCRIPT_FILENAME $document_root$real_script_name;
+    fastcgi_param SCRIPT_NAME $real_script_name;
+    #fastcgi_param PATH_INFO $path_info;
+    }
+#error_page 404 = /404.htm;
+}
