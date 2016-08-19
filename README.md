@@ -6,8 +6,8 @@ save something for forget
 可以当这是一个工具箱
 
 # nginxForThinkphp  
-
 nginxForThinkphp.txt  
+
 nginx默认不支持pathinfo而thinkphp需要pathinfo支持  
 该文件是nginx对某站点的独立配置文件  
 开启nginx的pathinfo支持，进而支持thinkphp  
